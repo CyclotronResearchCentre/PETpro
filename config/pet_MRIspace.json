@@ -1,0 +1,289 @@
+{
+  "Carotides": {
+    "images": {
+      "query": {
+        "modality": "pet",
+        "suffix": "pet",
+        "extension": [".nii", ".nii.gz"],
+        "desc": "",
+        "space": ""
+      },
+      "number": 1
+    },
+    "frames": {
+      "injection_cut": 0.05,
+      "signal_cut": 0.20,
+      "radius": 15, 
+      "noise_cut": 1.2,
+      "min_frame": 1
+    },
+    "masks": {
+      "radius": 17,
+      "z_rejection": 5,
+      "signal": 2.5
+    },
+    "seed": {
+      "min_value": 4000,
+      "candidate": 0.8
+    },
+    "expansion": {
+      "hot_carotides": 0.8,
+      "cold_carotides": 0.5,
+      "min_size": 20,
+      "max_size": 30
+    },
+    "correlation": {
+      "threshold": 0.875,
+      "expansion": 1.1
+    }
+  },
+  "IDIF":{
+    "images": {
+      "query": {
+        "modality": "pet",
+        "suffix": "pet",
+        "extension": [".nii", ".nii.gz"],
+        "desc": "",
+        "space": ""
+      },
+      "number": 1
+    },
+    "carotide": {
+      "query": {
+        "modality": "Carotides",
+        "suffix": "mask",
+        "extension": ".nii",
+        "label": "CR",
+        "description": "correlated"
+      },
+      "number": 1
+    },
+    "PVC": {
+      "PSF": {
+        "FWHM": [6.48, 6.58, 4.67]
+      },
+      "method": "gmt",
+      "time_correction": 120 
+    },
+    "metabolite":{
+      "model": "Sigmoidal",
+      "offset": "injection",
+      "params": {
+        "d": 1,
+        "a": 0.9999999999991113,
+        "b": 442.4072239251771,
+        "e": 23.560502145851437
+      }
+    }
+  },
+  "AIF": {
+    "blood": {
+      "query": {
+        "modality": "pet",
+        "suffix": "blood",
+        "extension": ".tsv"
+      },
+      "number": 1
+    },
+    "image": {
+      "query": {
+        "modality": "pet",
+        "extension": [".nii", ".nii.gz"]
+      },
+      "number": 1
+    },
+    "offset": {
+      "query": {
+        "modality": "Carotides",
+        "suffix": "mask",
+        "description": "correlated",
+        "extension": ".nii"
+      },
+      "number": 1
+    },
+    "PVC": {
+      "PSF": {
+        "FWHM": [6.48, 6.58, 4.67]
+      },
+      "method": "lrd",
+      "time_correction": 120 
+    },
+    "metabolite":{
+      "method": "Sigmoidal",
+      "parameters": {
+        "A0": 1,
+        "a": 0.9588011031468416,
+        "b": 396.9240848165973,
+        "e": 0
+      }
+    }
+  },
+  "brainmask": {
+    "treshold": 0.8,
+    "use_zero": true,
+    "tissues": {
+      "query": {
+        "modality": "Segmented",
+        "prefix": ["c1", "c2", "c3"],
+        "suffix": "probseg",
+        "extension": ".nii"
+      },
+      "number": 3,
+      "labels": ["M", "WM", "CSF"]
+    },
+    "other": {
+      "query": {
+        "modality": "anat",
+        "suffix": "MPM",
+        "acq": "MTw",
+        "part": "mag",
+        "echo": "1",
+        "extension": ".nii"
+      },
+      "number": 1
+    }
+  },
+  "registration": {
+    "space": "mri",
+    "resolution": "hi",
+    "batch_overwrite": {
+      "roptions": {"interp": 4}
+    },
+    "images": {
+      "query": {
+        "modality": "pet",
+        "suffix": "pet",
+        "extension": [".nii", ".nii.gz"],
+        "desc": "",
+        "space": ""
+      },
+      "number": 1,
+      "sum_img": [9, 22]
+    },
+    "reference":{
+      "query": {
+        "prefix": "",
+        "modality": "anat",
+        "suffix": "MPM",
+        "acq": "MTw",
+        "part": "mag",
+        "echo": "1",
+        "extension": ".nii",
+        "mask": "Brain",
+        "desc": "",
+        "space": ""
+      },
+      "number": 1
+    },
+    "other": {}
+  },
+  "PVC": {
+    "method": "IY",
+    "frame_skip": 6,
+    "option": "--debug",
+    "FWHM": [6.48, 6.58, 4.67],
+    "images": {
+      "query": {
+          "modality": "pet",
+          "suffix": "pet",
+          "extension": [".nii", ".nii.gz"],
+          "space": "mri",
+          "desc": ""
+      },
+      "number": 1
+    },
+    "tissues": {
+      "query": {
+        "modality": "Segmented",
+        "prefix": "",
+        "label": "",
+        "suffix": "probseg",
+        "space": "orig",
+        "extension": ".nii"
+      },
+      "number": 1
+    }
+  },
+  "modelling": {
+    "image": {
+      "query": {
+        "modality": "pet",
+        "desc": "PVC",
+        "suffix": "pet",
+        "space": "mri",
+        "extension": ".nii"
+      }
+    },
+    "mask": {
+      "query": {
+        "modality": "Segmented",
+        "suffix": "mask",
+        "label": "Brain",
+        "extension": ".nii"
+      },
+      "number": 1
+    },
+    "idif": {
+      "query": {
+        "modality": "pet_IF",
+        "suffix": "if",
+        "extension": ".tsv"
+      },
+      "number": 1,
+      "IF": "input_function"
+    },
+    "start_time": 1500,
+    "end_time": 0
+  },
+  "modelling_noPVC": {
+    "image": {
+      "query": {
+        "modality": "pet",
+        "desc": "",
+        "suffix": "pet",
+        "space": "mri",
+        "extension": ".nii"
+      }
+    },
+    "mask": {
+      "query": {
+        "modality": "Segmented",
+        "suffix": "mask",
+        "label": "Brain",
+        "extension": ".nii"
+      },
+      "number": 1
+    },
+    "idif": {
+      "query": {
+        "modality": "pet_IF",
+        "suffix": "if",
+        "extension": ".tsv"
+      },
+      "number": 1,
+      "IF": "input_function"
+    },
+    "start_time": 1500,
+    "end_time": 0
+  },
+  "normalisation": {
+    "template": "Template_6.nii",
+    "prefix": "sw",
+    "flowfield": {
+      "query": {
+        "prefix": "u_rc1",
+        "extension": ".nii"
+      },
+      "number": 1
+    },
+    "images": {
+        "query": {
+          "prefix": "",
+          "space": "mri",
+          "res": "hi",
+          "suffix": "Vt",
+          "extension": ".nii"
+        }
+    }
+  }
+}

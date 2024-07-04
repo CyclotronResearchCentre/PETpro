@@ -1,0 +1,139 @@
+{
+  "Carotides": {
+    "images": {
+      "query": {
+        "modality": "pet",
+        "suffix": "pet",
+        "extension": [".nii", ".nii.gz"],
+        "desc": "",
+        "space": ""
+      },
+      "number": 1
+    },
+    "frames": {
+      "injection_cut": 0.05,
+      "signal_cut": 0.20,
+      "radius": 15, 
+      "noise_cut": 1.2,
+      "min_frame": 1
+    },
+    "masks": {
+      "radius": 17,
+      "z_rejection": 5,
+      "signal": 2.5
+    },
+    "seed": {
+      "min_value": 4000,
+      "candidate": 0.8
+    },
+    "expansion": {
+      "hot_carotides": 0.8,
+      "cold_carotides": 0.5,
+      "min_size": 20,
+      "max_size": 30
+    },
+    "correlation": {
+      "threshold": 0.875,
+      "expansion": 1.1
+    }
+  },
+  "IDIF":{
+    "images": {
+      "query": {
+        "modality": "pet",
+        "suffix": "pet",
+        "extension": [".nii", ".nii.gz"],
+        "desc": "",
+        "space": ""
+      },
+      "number": 1
+    },
+    "carotide": {
+      "query": {
+        "modality": "Carotides",
+        "suffix": "mask",
+        "extension": ".nii",
+        "label": "CR",
+        "description": "correlated"
+      },
+      "number": 1
+    },
+    "PVC": {
+      "PSF": {
+        "FWHM": [6.48, 6.58, 4.67]
+      },
+      "method": "gmt",
+      "time_correction": 120 
+    },
+    "metabolite":{
+      "model": "Sigmoidal",
+      "offset": "injection",
+      "params": {
+        "d": 1,
+        "a": 0.9999999999991113,
+        "b": 442.4072239251771,
+        "e": 23.560502145851437
+      }
+    }
+  },
+  "PVC": {
+    "method": "IY",
+    "frame_skip": 6,
+    "option": "-n 15",
+    "FWHM": [6.48, 6.58, 4.67],
+    "images": {
+   "query": {
+        "modality": "pet",
+        "suffix": "pet",
+        "extension": [".nii", ".nii.gz"],
+        "space": "",
+        "desc": ""
+      },
+      "number": 1
+    },
+    "masks": {
+      "query": {
+        "modality": "Segmented",
+        "prefix": ["c1", "c2", "c3"],
+        "suffix": "MPMMTsat",
+        "space": "pet",
+        "res": "lo",
+        "extension": ".nii"
+      },
+      "number": 3,
+      "labels": ["GM", "WM", "CSF"],
+      "treshold": 0.5
+    }
+  },
+  "modelling": {
+    "image": {
+      "query": {
+        "modality": "pet",
+        "desc": "PVC",
+        "suffix": "pet",
+        "space": "",
+        "extension": ".nii"
+      }
+    },
+    "mask": {
+      "query": {
+        "modality": "PVC",
+        "suffix": "mask", 
+        "desc": "MPMMTsat",
+        "extension": ".nii"
+      },
+      "number": 1
+    },
+    "idif": {
+      "query": {
+        "modality": "pet_IF",
+        "suffix": "if",
+        "extension": ".tsv"
+      },
+      "number": 1,
+      "IF": "input_function"
+    },
+    "start_time": 1500,
+    "end_time": 0
+  }
+}
