@@ -92,16 +92,21 @@ function outDataset = pet_PVC(pet_ds, seg_ds, ...
       p.entities.label = regexprep(method, '[^a-zA-Z0-9]+', '');
       p.entities.desc = 'PVC';
 
+      if ~isfield(params, 'petpvc_exe_path') || isempty(params.petpvc_exe_path)
+          petpvc_exe = fullfile(pwd, 'petpvc.exe');
+      else
+          petpvc_exe = params.petpvc_exe_path;
+      end
+
       for i = 1:numel(Vo)
         p.ext = sprintf('.%03d%s', i, '.nii');
         MG_img{i} = fullfile(PVC_dir, crc_create_filename(p));
         if(i < params.frame_skip)
           copyfile(Vo(i).fname, MG_img{i});
         else
-          cmd = ['petpvc -i ' Vo(i).fname ' -m ' tissue_4D ...
-                 ' -o ' MG_img{i}  ' --pvc ' method ...
-                 sprintf(' -x %.2f -y %.2f -z %.2f', params.FWHM(:)) ...
-                 ];
+          cmd = [petpvc_exe ' -i "' Vo(i).fname '" -m "' tissue_4D ...
+                   '" -o "' MG_img{i} '" --pvc ' method ...
+                   sprintf(' -x %.2f -y %.2f -z %.2f', params.FWHM(:))];
           if ~isempty(params.option)
             cmd = [cmd ' ' params.option]; %#ok<AGROW>
           end
