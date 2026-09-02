@@ -70,9 +70,9 @@
       "offset": "injection",
       "params": {
         "d": 1,
-        "a": 0.9999999999991113,
-        "b": 442.4072239251771,
-        "e": 23.560502145851437
+        "a": 0.9370613291611155,
+        "b": 692.1076091977601,
+        "e": 2.563555105083992e-06
       }
     }
   },
@@ -109,8 +109,10 @@
       "time_correction": 120 
     },
     "metabolite":{
+      "reference": "inj",
       "method": "Sigmoidal",
       "parameters": {
+        "d": 1,
         "A0": 1,
         "a": 0.9588011031468416,
         "b": 396.9240848165973,
@@ -135,10 +137,8 @@
     "other": {
       "query": {
         "modality": "anat",
-        "suffix": "MPM",
-        "acq": "MTw",
-        "part": "mag",
-        "echo": "1",
+        "suffix": "T1w",
+        "acq": "mprage",
         "extension": ".nii"
       },
       "number": 1
@@ -178,10 +178,8 @@
     "reference":{
       "query": {
         "modality": "anat",
-        "suffix": "MPM",
-        "acq": "MTw",
-        "part": "mag",
-        "echo": "1",
+        "suffix": "T1w",
+        "acq": "mprage",
         "extension": ".nii",
         "mask": "Brain",
         "desc": "",
@@ -220,10 +218,8 @@
     "images":{
       "query": {
         "modality": "anat",
-        "suffix": "MPM",
-        "acq": "MTw",
-        "part": "mag",
-        "echo": "1",
+        "suffix": "T1w",
+        "acq": "mprage",
         "extension": ".nii",
         "mask": "Brain",
         "desc": "",
@@ -246,6 +242,7 @@
     "frame_skip": 6,
     "option": "--debug",
     "FWHM": [6.48, 6.58, 4.67],
+    "petpvc_exe_path": "path_to_petpvc.exe",
     "images": {
     "query": {
         "modality": "pet",
@@ -300,7 +297,18 @@
       "IF": "input_function"
     },
     "start_time": 1500,
-    "end_time": 0
+    "end_time": 0,
+    "qc_save": true,
+    "qc_masks": {
+      "query": {
+        "modality": "Segmented",
+        "label": ["GM", "WM", "CSF"],
+        "suffix": "probseg",
+        "space": "pet",
+        "extension": [".nii", ".nii.gz"]
+      }
+    },
+    "qc_nvox": 10
   },
   "modelling_noPVC": {
     "image": {
@@ -333,7 +341,110 @@
       "IF": "input_function"
     },
     "start_time": 1500,
-    "end_time": 0
+    "end_time": 0,
+    "qc_save": true,
+    "qc_masks": {
+      "query": {
+        "modality": "Segmented",
+        "label": ["GM", "WM", "CSF"],
+        "suffix": "probseg",
+        "space": "pet",
+        "extension": [".nii", ".nii.gz"]
+      }
+    },
+    "qc_nvox": 10
+  },
+  "modelling_aif_blood": {
+    "image": {
+      "query": {
+        "modality": "pet",
+        "desc": "PVC",
+        "suffix": "pet",
+        "space": "",
+        "extension": ".nii"
+      }
+    },
+    "mask": {
+      "query": {
+        "modality": "Segmented",
+        "suffix": "mask",
+        "space": "pet",
+        "res": "lo",
+        "label": "Brain",
+        "extension": ".nii"
+      },
+      "number": 1
+    },
+    "idif": {
+      "query": {
+        "modality": "pet_IF",
+        "suffix": "if",
+        "label": "blood",
+        "metabolite": "Sigmoidal",
+        "extension": ".tsv"
+      },
+      "number": 1,
+      "IF": "input_function"
+    },
+    "start_time": 1500,
+    "end_time": 0,
+    "qc_save": true,
+    "qc_masks": {
+      "query": {
+        "modality": "Segmented",
+        "label": ["GM", "WM", "CSF"],
+        "suffix": "probseg",
+        "space": "pet",
+        "extension": [".nii", ".nii.gz"]
+      }
+    },
+    "qc_nvox": 10
+  },
+  "modelling_aif_plasma": {
+    "image": {
+      "query": {
+        "modality": "pet",
+        "desc": "PVC",
+        "suffix": "pet",
+        "space": "",
+        "extension": ".nii"
+      }
+    },
+    "mask": {
+      "query": {
+        "modality": "Segmented",
+        "suffix": "mask",
+        "space": "pet",
+        "res": "lo",
+        "label": "Brain",
+        "extension": ".nii"
+      },
+      "number": 1
+    },
+    "idif": {
+      "query": {
+        "modality": "pet_IF",
+        "suffix": "if",
+        "label": "plasma",
+        "metabolite": "Sigmoidal",
+        "extension": ".tsv"
+      },
+      "number": 1,
+      "IF": "input_function"
+    },
+    "start_time": 1500,
+    "end_time": 0,
+    "qc_save": true,
+    "qc_masks": {
+      "query": {
+        "modality": "Segmented",
+        "label": ["GM", "WM", "CSF"],
+        "suffix": "probseg",
+        "space": "pet",
+        "extension": [".nii", ".nii.gz"]
+      }
+    },
+    "qc_nvox": 10
   },
   "normalisation": {
     "template": "Template_6.nii",
