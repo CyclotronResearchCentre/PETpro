@@ -132,7 +132,7 @@ where:
 
 ---
 
-## Optional: Arterial Input Function (AIF) Data
+### Optional: Arterial Input Function (AIF) Data
 
 If arterial input function (AIF)-based kinetic modelling is performed, arterial blood data must be provided for each subject.
 
@@ -192,7 +192,7 @@ Missing measurements should be indicated as `n/a`.
 
 ---
 
-## Expected Dataset Overview
+### Expected Dataset Overview
 
 The expected directory structure is summarized below:
 
