@@ -55,12 +55,11 @@ function outDataset = pet_Modelling(pet_ds, idif_ds, mask_ds, destination, varar
                          'index_derivatives', false,...
                          'tolerant', true);
     end
-    query = params.mask.query;
-    if ~isempty(subjects)
-      query.sub = subjects;
-    end
     crc_bids_gen_dervative(MASK, destination, procStep,...
                            params.mask,...
+                           subjects);
+    crc_bids_gen_dervative(MASK, destination, procStep,...
+                           params.qc_masks,...
                            subjects);
   end
   outDataset = fullfile(destination, procStep);
@@ -84,6 +83,7 @@ function outDataset = pet_Modelling(pet_ds, idif_ds, mask_ds, destination, varar
 
     base_dir = fullfile(outDataset, ['sub-' sub]);
     Logan_dir = fullfile(base_dir, 'Logan');
+    QC_dir = fullfile(base_dir, 'petQC');
 
     try
 
@@ -122,12 +122,21 @@ function outDataset = pet_Modelling(pet_ds, idif_ds, mask_ds, destination, varar
           mkdir(Logan_dir);
         end
 
+        qc_mask_img = crc_bids_query_data(DERIV, params.qc_masks, sub, 'QC mask'); 
+        if ~exist(QC_dir, 'dir')
+          mkdir(QC_dir);
+        end
+
+
         [~, basename, ~] = fileparts(pet_img{img});
         fprintf('%s\n', basename);
         pet_Model.logan_image(pet_img{img}, idif, frames, mask_img, ...
                               params.start_time, ...
                               params.end_time, ...
-                              Logan_dir);
+                              Logan_dir,...
+                              QC_dir, params.qc_save,...
+                              qc_mask_img, ...
+                              params.qc_nvox);
       end
 
     catch ME

@@ -7,7 +7,8 @@
 
 
 function parametric_images = logan_image(pet_filename, input, frames, brainmask_filename, ...
-                                         start_time, end_time, outputdir)
+                                         start_time, end_time, outputdir,...
+                                         qc_path, qc_save, qc_masks, qc_nvox)
 %%
 %% Parameters:
 %% -----------
@@ -100,12 +101,25 @@ V.fname = niftiname;
 V.private.dat.fname = niftiname;  
 spm_write_vol(V, LoganQC.s);
 
-p.suffix = 'QC';
-p.ext = '.mat';
-fname = fullfile(outputdir, crc_create_filename(p));
-save(fname, 'LoganQC');
+if qc_save
+  p.suffix = 'QC';
+  p.ext = '.mat';
+  fname = fullfile(outputdir, crc_create_filename(p));
+  save(fname, 'LoganQC');
+end
 
-
+if isempty(qc_masks)
+  pet_Model.QCreport(LoganQC,  'nvox', qc_nvox,...
+                     'interactive', false, 'path', qc_path,...
+                     'basename', niftiname);
+else
+  for imask = 1:numel(qc_masks)
+    pet_Model.QCreport(LoganQC,  'nvox', qc_nvox,...
+                       'interactive', false, 'path', qc_path,...
+                       'basename', niftiname,...
+                       'mask', qc_masks{imask});
+  end
+end
 
 p.suffix = 'mask';
 p.ext = '.nii';

@@ -142,11 +142,18 @@ function outDataset = pet_IDIF(source, destination, varargin)
                    'visible', 'off');
       loglog(mid_time, IF, '-b*', 'linewidth', 1, ...
              'DisplayName', 'IDIF');
+      res_IF = IF;
       hold on;
-      loglog(mid_time, IF_PVC, '-r*', 'linewidth', 1, ...
-             'DisplayName', 'IDIF+PVC');
-      loglog(mid_time, IF_MET, '--r*', 'linewidth', 1, ...
-             'DisplayName', 'IDIF+PVC+metabolite');
+      if exist('IF_PVC', 'var')
+        loglog(mid_time, IF_PVC, '-r*', 'linewidth', 1, ...
+               'DisplayName', 'IDIF+PVC');
+        res_IF = IF_PVC;
+      end
+      if exist('IF_MET', 'var')
+        loglog(mid_time, IF_MET, '--r*', 'linewidth', 1, ...
+               'DisplayName', 'IDIF+PVC+metabolite');
+        res_IF = IF_MET;
+      end
 
       legend;
       xlabel('Time [s]');
@@ -174,7 +181,8 @@ function outDataset = pet_IDIF(source, destination, varargin)
                        'Sources', {source},...
                        'PVC', params_section.PVC);
 
-      T = table(mid_time, IF_MET, 'VariableNames', {'onset', 'input_function'});
+
+      T = table(mid_time, res_IF, 'VariableNames', {'onset', 'input_function'});
       writetable(T, fullfile(out_dir, p.filename),...
                  'FileType', 'text', 'Encoding', 'UTF-8',...
                  'Delimiter', '\t');

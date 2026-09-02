@@ -1,4 +1,4 @@
-function outDataset = pet_Normalisation(img_ds, template_ds, destination, varargin)
+function outDataset = pet_Normalisation(flow_ds, img_ds, destination, varargin)
 %% Performs normalisation to MNI space of given images in img_ds, according to
 %% templates in template_ds
 
@@ -26,23 +26,13 @@ function outDataset = pet_Normalisation(img_ds, template_ds, destination, vararg
   subjects = args.Results.subjects;
   outDataset = fullfile(destination, procStep);
 
-  template = params.template;
-  if ~exist(template, 'file')
-    template = fullfile(template_ds, 'DartellTemplates', params.template);
-    if ~exist(template, 'file')
-      error('filed to find template %s%s', template);
-    end
-  end
-  fprintf('Using template from %s\n', template);
-
-  TEMPLATE = bids.layout(template_ds, ...
-                         'use_schema', false,...
-                         'index_derivatives', false,...
-                         'tolerant', true);
-  crc_bids_gen_dervative(TEMPLATE, destination, procStep,...
+  FLW = bids.layout(flow_ds, ...
+                    'use_schema', false,...
+                    'index_derivatives', false,...
+                    'tolerant', true);
+  crc_bids_gen_dervative(FLW, destination, procStep,...
                          params.flowfield,...
                          subjects);
-
   IMG = bids.layout(img_ds, ...
                     'use_schema', false,...
                     'index_derivatives', false,...
@@ -67,67 +57,22 @@ function outDataset = pet_Normalisation(img_ds, template_ds, destination, vararg
       
       images = crc_bids_query_data(DERIV, params.images, ...
                                    sub, 'images');
+      results_path = fileparts(images{1});
       fprintf('%d images will be normalized to mni space\n', size(images, 1));
 
       clear matlabbatch;
-      run(fullfile(pathStep, 'MBatches','Dartel_norm.m'));
-      matlabbatch{1}.spm.tools.dartel.mni_norm.data.subj.flowfield = flowfield;
-      matlabbatch{1}.spm.tools.dartel.mni_norm.data.subj.images = images;
-      matlabbatch{1}.spm.tools.dartel.mni_norm.template = {template};
+      run(fullfile(pathStep, 'MBatches','Std_norm.m'));
+      matlabbatch{1}.spm.spatial.normalise.write.subj.def = flowfield;
+      matlabbatch{1}.spm.spatial.normalise.write.subj.resample = images;
 
       spm_jobman('run',matlabbatch);
 
-      % changing names of files
-      for i = 1:size(images, 1)
-        path = fileparts(images{i});
-        p = bids.internal.parse_filename(images{i});
-        p.use_schema = false;
-
-        p.ext = '.json';
-        orig_json = fullfile(path, crc_create_filename(p));
-
-        p.ext = '.nii';
-        p.prefix = 'w';
-        in_mni_file = fullfile(path, crc_create_filename(p));
-        if ~exist(in_mni_file, 'file')
-          p.prefix = 'sw';
-          in_mni_file = fullfile(path, crc_create_filename(p));
-        end
-        p.ext = '.json';
-        in_mni_json = fullfile(path, crc_create_filename(p));
-
-        p.prefix = '';
-        p.ext = '.nii';
-        p.entities.space = 'MNI';
-        p.entities.res = '';
-        out_mni_file = fullfile(path, crc_create_filename(p));
-
-        p.ext = '.json';
-        out_mni_json = fullfile(path, crc_create_filename(p));
-
-        if ~exist(in_mni_file, 'file')
-          warning('Subject %s: Normalised file %s not found', ...
-                  sub, in_mni_file);
-          continue;
-        end
-        movefile(in_mni_file, out_mni_file);
-
-        if exist(in_mni_json, 'file')
-          delete(in_mni_json);
-        end
-
-        if exist(orig_json, 'file')
-          js = spm_jsonread(orig_json);
-        else
-          js = struct();
-        end
-
-        crc_bids_create_json(js, out_mni_json,...
-                             'Description', ...
-                             'Normalised to MNI space',...
-                             'Sources', images{i},...
-                             'SpatialReference', template);
-      end
+      prefix_rules(1).w.prefix = '';
+      prefix_rules(1).w.space = 'MNI152';
+      prefix_rules(1).w.res = '2mm';
+      crc_bids_rebidsify_dir(results_path,...
+                             prefix_rules,...
+                             []);
     catch ME
       warning('Subject %s failed: %s', sub, ME.getReport('extended'));
       continue;
