@@ -399,8 +399,7 @@ The expected directory structure is summarized below:
     └── Segmented/
         └── sub-<subject_id>/
             ├── anat/
-            │   ├── sub-<subject_id>_acq-mprage_mask-Brain_T1w.nii
-            │   └── sub-<subject_id>_acq-mprage_mask-Brain_space-pet_res-lo_T1w.nii
+            │   └── sub-<subject_id>_acq-mprage_mask-Brain_T1w.nii
             │
             ├── Dartell/
             │   └── u_rc1sub-<subject_id>_acq-mprage_space-individual_label-Template_flow.nii
